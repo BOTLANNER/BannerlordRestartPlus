@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="English" />
+    </tags>
+    <strings>
+        <string id="restart_plus_01" text="Restart+." />
+        <string id="restart_plus_02" text="Are you sure you want to start over with a new character in this game world?" />
+        <string id="restart_plus_03" text="The game needs to be restarted to avoid potential crashes. Do you want to close the game now?" />
+    </strings>
+</base>

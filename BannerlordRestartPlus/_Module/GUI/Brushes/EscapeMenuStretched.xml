@@ -1,0 +1,12 @@
+﻿<Brushes>
+  <Brush Name="EscapeMenuStretched.Background">
+    <Layers>
+      <BrushLayer Name="Default" Sprite="SPGeneral\EscapeMenu\escape_panel"  ExtendBottom="-66"  />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" />
+      </Style>
+    </Styles>
+  </Brush>
+</Brushes>
