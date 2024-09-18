@@ -116,10 +116,7 @@ namespace BannerlordRestartPlus.Actions
                 {
                     return;
                 }
-            }
 
-            if (isStoryMode)
-            {
                 //var _elderBrotherField = AccessTools.Field(typeof(StoryModeHeroes), "_elderBrother");
                 //var _littleBrotherField = AccessTools.Field(typeof(StoryModeHeroes), "_littleBrother");
                 //var _littleSisterField = AccessTools.Field(typeof(StoryModeHeroes), "_littleSister");
@@ -177,8 +174,15 @@ namespace BannerlordRestartPlus.Actions
             Campaign.Current.LogEntryHistory.DeleteOutdatedLogs();
             Campaign.Current.LogEntryHistory.GameActionLogs.Clear();
 
+            var mainPos = Hero.MainHero.GetPosition().AsVec2;
+
             var position = ChangePlayerCharacterInGameAction.Apply(tempMain);
             Campaign.Current.TimeControlMode = CampaignTimeControlMode.Stop;
+
+            if (Main.Settings!.PlaceExistingAtOldPosition && tempMain.PartyBelongedTo != null)
+            {
+                tempMain.PartyBelongedTo.Position2D = mainPos;
+            }
 
 
             if (Main.Settings!.EditLooks)
