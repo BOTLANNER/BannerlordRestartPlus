@@ -57,6 +57,22 @@ namespace BannerlordRestartPlus.Actions
                 KillCharacterAction.ApplyByDeathMarkForced(mother, false);
             }
 
+            if (!Main.Settings!.CharacterCreation)
+            {
+                GiveGoldAction.ApplyBetweenCharacters(null, hero, 2000, true);
+
+                if (!Main.Settings.SeedXP)
+                {
+                    hero.ClearSkills();
+                    hero.ClearAttributes();
+                    hero.ClearPerks();
+
+                    hero.Clan.Renown = 0f;
+
+                    Campaign.Current.PlayerTraitDeveloper.UpdateTraitXPAccordingToTraitLevels();
+                }
+            }
+
             return hero;
         }
     }

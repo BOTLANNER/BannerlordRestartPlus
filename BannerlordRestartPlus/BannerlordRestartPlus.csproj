@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <ModuleName>$(MSBuildProjectName)</ModuleName>
   </PropertyGroup>
   
@@ -58,7 +58,7 @@
   <PropertyGroup>
     <GameVersionConstant>e$([System.String]::Copy('$(GameVersion)').Replace('.',''))</GameVersionConstant>
     <MCMUseConstant Condition="$(MCM_V5) == 'true'">MCM_v5</MCMUseConstant>
-    <DefineConstants>$(DefineConstants);$(GameVersionConstant);$(MCMUseConstant)</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;BETA;e1003729;MCM_v5;POP_STATE_TO_MAP</DefineConstants>
     <RootNamespace>RestartPlus</RootNamespace>
     <AssemblyName>RestartPlus</AssemblyName>
   </PropertyGroup>

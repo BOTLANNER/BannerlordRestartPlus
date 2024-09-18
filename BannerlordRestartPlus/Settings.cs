@@ -51,5 +51,11 @@ namespace BannerlordRestartPlus
         [SettingPropertyBool("Allow for Story Campaign", HintText = AllowCampaign_Hint, RequireRestart = false, Order = 0, IsToggle = false)]
         [SettingPropertyGroup("Experimental", GroupOrder = 1)]
         public bool AllowCampaign { get; set; } = false;
+
+        private const string PlayAsExisting_Hint = "Enable playing as any existing character. (EXPERIMENTAL: Stability not guaranteed!) [ Default: ON ]";
+
+        [SettingPropertyBool("Allow play as existing characters", HintText = PlayAsExisting_Hint, RequireRestart = false, Order = 1, IsToggle = false)]
+        [SettingPropertyGroup("Experimental")]
+        public bool PlayAsExisting { get; set; } = true;
     }
 }

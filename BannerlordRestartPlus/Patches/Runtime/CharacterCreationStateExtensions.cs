@@ -12,6 +12,7 @@ using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 
 namespace BannerlordRestartPlus.Patches.Runtime
 {
@@ -78,10 +79,10 @@ namespace BannerlordRestartPlus.Patches.Runtime
                 ActiveSaveSlotNameField.SetValue(null, saveName);
             }
 
-            saveName = saveName.Replace(" (auto)", " (RestartPlus)");
-            if (!saveName.EndsWith(" (RestartPlus)"))
+            saveName = saveName.Replace(new TextObject("{=restart_plus_n_02} (auto)").ToString(), new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString());
+            if (!saveName.EndsWith(new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString()))
             {
-                saveName += " (RestartPlus)";
+                saveName += new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString();
             }
 
             Campaign.Current.SaveHandler.SaveAs(saveName);

@@ -34,23 +34,33 @@ using FaceGen = TaleWorlds.Core.FaceGen;
 
 namespace BannerlordRestartPlus.Actions
 {
-
-    public class RestartPlusAction
+    public class PlayAsCharacterAction
     {
-        static RestartPlusAction? _instance = null;
-        internal static RestartPlusAction Instance => (_instance ??= new RestartPlusAction());
+        static PlayAsCharacterAction? _instance = null;
+        internal static PlayAsCharacterAction Instance => (_instance ??= new PlayAsCharacterAction());
 
         static FieldInfo ActiveSaveSlotNameField = AccessTools.Field(typeof(MBSaveLoad), "ActiveSaveSlotName");
         static MethodInfo GetNextAvailableSaveNameMethod = AccessTools.Method(typeof(MBSaveLoad), "GetNextAvailableSaveName");
 
 
-        public static void Apply()
+        public static void Apply(Hero character)
         {
+            if (character == Hero.MainHero)
+            {
+                TextObject textObject = new TextObject("{=restart_plus_n_13}RestartPlus: Already playing as {CHARACTER}");
+                textObject.SetTextVariable("CHARACTER", character.Name);
+                InformationManager.DisplayMessage(new InformationMessage(textObject.ToString()));
+                return;
+            }
+
             CharacterCreationStateExtensions.CharacterCreationState = null;
             CharacterCreationStateExtensions.MapState = null;
             CharacterCreationStateExtensions.Position = null;
 
-            CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(Instance, new Action<bool, string>(Instance.ApplyInternal));
+            CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(Instance, (bool isSaveSuccessful, string newSaveGameName) =>
+            {
+                Instance.ApplyInternal(character, isSaveSuccessful, newSaveGameName);
+            });
 
             string saveName = (string) ActiveSaveSlotNameField.GetValue(null);
             if (saveName == null)
@@ -61,8 +71,8 @@ namespace BannerlordRestartPlus.Actions
             Campaign.Current.SaveHandler.SaveAs(saveName + new TextObject("{=restart_plus_n_02} (auto)").ToString());
         }
 
-        private RestartPlusAction() { }
-        private void ApplyInternal(bool isSaveSuccessful, string newSaveGameName)
+        private PlayAsCharacterAction() { }
+        private void ApplyInternal(Hero tempMain, bool isSaveSuccessful, string newSaveGameName)
         {
             CampaignEvents.OnSaveOverEvent.ClearListeners(this);
 
@@ -107,9 +117,6 @@ namespace BannerlordRestartPlus.Actions
                     return;
                 }
             }
-
-
-            Hero tempMain = CreateHeroAction.Apply(requireFamily: isStoryMode);
 
             if (isStoryMode)
             {
@@ -173,37 +180,13 @@ namespace BannerlordRestartPlus.Actions
             var position = ChangePlayerCharacterInGameAction.Apply(tempMain);
             Campaign.Current.TimeControlMode = CampaignTimeControlMode.Stop;
 
-            //while (Campaign.Current.IssueManager.Issues.Count > 0)
-            //{
-            //    var issue = Campaign.Current.IssueManager.Issues.FirstOrDefault();
-            //    Campaign.Current.IssueManager.DeactivateIssue(issue.Value);
-            //}
 
-            if (Main.Settings!.CharacterCreation)
-            {
-                var cccb = CharacterCreationContentBase.Instance;
-                if (cccb == null)
-                {
-                    cccb = GetCharacterCreationContent();
-                }
-
-                var active = Game.Current!.GameStateManager.ActiveState;
-                CharacterCreationStateExtensions.Position = position;
-                if (active is MapState ms)
-                {
-                    CharacterCreationStateExtensions.MapState = ms;
-                }
-
-                CharacterCreationState gameState = Game.Current.GameStateManager.CreateState<CharacterCreationState>(new object[] { cccb });
-                CharacterCreationStateExtensions.CharacterCreationState = gameState;
-                Game.Current!.GameStateManager.PushState(gameState, 0);
-            }
-            else if (Main.Settings.EditLooks)
+            if (Main.Settings!.EditLooks)
             {
                 FaceGen.ShowDebugValues = true;
                 ScreenManager.PushScreen(new InGameBodyGeneratorScreen(tempMain.CharacterObject, false, null, () =>
                 {
-                    CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(this, new Action<bool, string>(this.LoadInternal));
+                    CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(RestartPlusAction.Instance, new Action<bool, string>(RestartPlusAction.Instance.LoadInternal));
 
                     Campaign.Current.SaveHandler.SaveAs(newSaveGameName.Replace(new TextObject("{=restart_plus_n_02} (auto)").ToString(), new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString()));
                 }));
@@ -211,87 +194,10 @@ namespace BannerlordRestartPlus.Actions
             }
             else
             {
-                CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(this, new Action<bool, string>(this.LoadInternal));
+                CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(RestartPlusAction.Instance, new Action<bool, string>(RestartPlusAction.Instance.LoadInternal));
 
                 Campaign.Current.SaveHandler.SaveAs(newSaveGameName.Replace(new TextObject("{=restart_plus_n_02} (auto)").ToString(), new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString()));
             }
-        }
-
-
-        internal void LoadInternal(bool isSaveSuccessful, string newSaveGameName)
-        {
-            CampaignEvents.OnSaveOverEvent.ClearListeners(this);
-
-            RestartPlusBehaviour.SuggestGameRestart = true;
-            RestartPlusBehaviour.CheckRestart(onCancel: () =>
-            {
-
-                if (!isSaveSuccessful)
-                {
-                    Debug.WriteDebugLineOnScreen(new TextObject("{=restart_plus_n_04}RestartPlus: Could not save").ToString());
-                    return;
-                }
-                SaveGameFileInfo saveFileWithName = MBSaveLoad.GetSaveFileWithName(newSaveGameName);
-                if (saveFileWithName != null && !saveFileWithName.IsCorrupted)
-                {
-                    SandBoxSaveHelper.TryLoadSave(saveFileWithName, new Action<LoadResult>(this.StartGame), null);
-                    return;
-                }
-                InformationManager.ShowInquiry(new InquiryData((new TextObject("{=oZrVNUOk}Error", null)).ToString(), (new TextObject("{=t6W3UjG0}Save game file appear to be corrupted. Try starting a new campaign or load another one from Saved Games menu.", null)).ToString(), true, false, (new TextObject("{=yS7PvrTD}OK", null)).ToString(), null, null, null, "", 0f, null, null, null), false, false);
-            });
-        }
-
-        public void StartGame(LoadResult loadResult)
-        {
-            if (Game.Current != null)
-            {
-                ScreenManager.PopScreen();
-                GameStateManager.Current.CleanStates(0);
-                GameStateManager.Current = TaleWorlds.MountAndBlade.Module.CurrentModule.GlobalGameStateManager;
-            }
-            MBSaveLoad.OnStartGame(loadResult);
-            MBGameManager.StartNewGame(new SandBoxGameManager(loadResult));
-        }
-
-        private static CharacterCreationContentBase GetCharacterCreationContent()
-        {
-            var baseType = typeof(CharacterCreationContentBase);
-            var excludedTypes = new[] { typeof(SandboxCharacterCreationContent), typeof(StoryModeCharacterCreationContent) };
-
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
-            {
-                foreach (var type in assembly.GetTypes())
-                {
-                    try
-                    {
-                        if (type.IsSubclassOf(baseType))
-                        {
-
-                            var cccbType = type;
-                            if (cccbType != null && !excludedTypes.Contains(cccbType))
-                            {
-                                var cccb = cccbType.CreateInstance();
-                                if (cccb is CharacterCreationContentBase ccc)
-                                {
-                                    return ccc;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteDebugLineOnScreen(e.ToString());
-                    }
-                }
-            }
-
-            if (Game.Current!.GameType is CampaignStoryMode)
-            {
-                return new StoryModeCharacterCreationContent();
-            }
-
-            return new SandboxCharacterCreationContent();
         }
     }
 }

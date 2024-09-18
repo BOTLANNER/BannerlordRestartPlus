@@ -43,6 +43,7 @@ namespace BannerlordRestartPlus
         public static Harmony Harmony;
         private UIExtender? _extender;
 
+
         private static readonly IOptionalPatch[] HarmonyOptionalPatches;
         private static List<IRuntimePatch> HarmonyRuntimePatches = LoadRuntimePatches().ToList();
 
@@ -163,6 +164,7 @@ namespace BannerlordRestartPlus
             try
             {
                 gameInitializer.AddBehavior(new RestartPlusBehaviour());
+                gameInitializer.AddBehavior(new PlayAsBehaviour());
             }
             catch (System.Exception e) { Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); }
         }

@@ -5,5 +5,22 @@
     </tags>
     <strings>
         <string id="restart_plus_n_01" text="Restart+" />
+        <string id="restart_plus_n_02" text=" (auto)" />
+        <string id="restart_plus_n_03" text=" (RestartPlus)" />
+        <string id="restart_plus_n_04" text="RestartPlus: Could not save" />
+        <string id="restart_plus_n_05" text="RestartPlus: Not available. Current main character is busy (either in a settlement, in an encounter, or is a prisoner)." />
+        <string id="restart_plus_n_06" text="RestartPlus: Finalising new character." />
+        <string id="restart_plus_n_07" text="RestartPlus: Finalising {CHARACTER} of {OF} as player character." />
+        <string id="restart_plus_n_08" text="Restart+ not enabled!" />.
+        <string id="restart_plus_n_09" text="RestartPlus: Not available. {CHARACTER} is busy (either in a settlement, in an encounter, or is a prisoner)." />
+        <string id="restart_plus_n_10" text="Character" />
+        <string id="restart_plus_n_11" text="RestartPlus: Kingdom not found" />
+        <string id="restart_plus_n_12" text="RestartPlus: Clan not found" />
+        <string id="restart_plus_n_13" text="RestartPlus: Already playing as {CHARACTER}" />
+        <string id="restart_plus_n_14" text="RestartPlus: Close all open windows and resume on the world map for changes to take effect." />
+        <string id="restart_plus_n_15" text="RestartPlus: Already queued to play as this character." />
+        <string id="restart_plus_n_16" text="RestartPlus: {CHARACTER} is already dead." />
+        <string id="restart_plus_n_17" text="RestartPlus: {CHARACTER} is too young." />
+        <string id="restart_plus_n_18" text="RestartPlus: Playing as existing characters is disabled." />
     </strings>
 </base>

@@ -247,21 +247,6 @@ namespace BannerlordRestartPlus.Actions
             Campaign.Current.LogEntryHistory.GameActionLogs.Clear();
             Campaign.Current.InitializeSinglePlayerReferences();
 
-            if (!Main.Settings!.CharacterCreation)
-            {
-                GiveGoldAction.ApplyBetweenCharacters(null, Hero.MainHero, 2000, true);
-
-                if (!Main.Settings.SeedXP)
-                {
-                    newHero.ClearSkills();
-                    newHero.ClearAttributes();
-                    newHero.ClearPerks();
-
-                    newHero.Clan.Renown = 0f;
-
-                    Campaign.Current.PlayerTraitDeveloper.UpdateTraitXPAccordingToTraitLevels();
-                }
-            }
             Campaign.Current.TimeControlMode = CampaignTimeControlMode.Stop;
 
             return position;
