@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Reflection;
 
+using BannerlordRestartPlus.Patches;
+
 using HarmonyLib;
 
 using TaleWorlds.CampaignSystem;
@@ -10,6 +12,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Engine;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
+using TaleWorlds.ObjectSystem;
 
 namespace BannerlordRestartPlus
 {
@@ -122,6 +125,11 @@ namespace BannerlordRestartPlus
                 {
                     try
                     {
+                        if (!hero.CharacterObject.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(hero.CharacterObject);
+                        }
+
                         SetUpgradeTargets(hero.CharacterObject, new CharacterObject[0]);
                     }
                     catch (Exception e)
@@ -138,6 +146,11 @@ namespace BannerlordRestartPlus
                 {
                     try
                     {
+                        if (!p.LeaderHero.CharacterObject.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(p.LeaderHero.CharacterObject);
+                        }
+
                         if (!CharacterObject.All.Contains(p.LeaderHero.CharacterObject))
                         {
                             CharacterObject.All.Add(p.LeaderHero.CharacterObject);
@@ -162,7 +175,140 @@ namespace BannerlordRestartPlus
                 {
                     try
                     {
+                        if (!c.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(c);
+                        }
+
                         SetUpgradeTargets(c, new CharacterObject[0]);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.PrintError(e.Message, e.StackTrace);
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        Debug.SetCrashReportCustomString(e.Message);
+                        Debug.SetCrashReportCustomStack(e.StackTrace);
+                        InformationManager.DisplayMessage(new InformationMessage(e.ToString(), Error));
+                    }
+                }
+
+                var defaultSkills = HeroCreatorPatch.DefaultCharacterSkills.GetValue(Hero.MainHero.CharacterObject);
+                
+                foreach (var hero in Hero.FindAll(hero => hero.CharacterObject != null && HeroCreatorPatch.DefaultCharacterSkills.GetValue(hero.CharacterObject) == null))
+                {
+                    try
+                    {
+
+                        if (!hero.CharacterObject.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(hero.CharacterObject);
+                        }
+                        HeroCreatorPatch.DefaultCharacterSkills.SetValue(hero.CharacterObject, defaultSkills);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.PrintError(e.Message, e.StackTrace);
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        Debug.SetCrashReportCustomString(e.Message);
+                        Debug.SetCrashReportCustomStack(e.StackTrace);
+                        InformationManager.DisplayMessage(new InformationMessage(e.ToString(), Error));
+                    }
+                }
+
+                foreach (var p in MobileParty.All.Where(p => p.LeaderHero != null && p.LeaderHero.CharacterObject != null && HeroCreatorPatch.DefaultCharacterSkills.GetValue(p.LeaderHero.CharacterObject) == null))
+                {
+                    try
+                    {
+
+                        if (!p.LeaderHero.CharacterObject.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(p.LeaderHero.CharacterObject);
+                        }
+
+                        HeroCreatorPatch.DefaultCharacterSkills.SetValue(p.LeaderHero.CharacterObject, defaultSkills);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.PrintError(e.Message, e.StackTrace);
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        Debug.SetCrashReportCustomString(e.Message);
+                        Debug.SetCrashReportCustomStack(e.StackTrace);
+                        InformationManager.DisplayMessage(new InformationMessage(e.ToString(), Error));
+                    }
+                }
+
+                foreach (var c in CharacterObject.All.Where(c => c != null && HeroCreatorPatch.DefaultCharacterSkills.GetValue(c) == null))
+                {
+                    try
+                    {
+                        if (!c.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(c);
+                        }
+                        HeroCreatorPatch.DefaultCharacterSkills.SetValue(c, defaultSkills);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.PrintError(e.Message, e.StackTrace);
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        Debug.SetCrashReportCustomString(e.Message);
+                        Debug.SetCrashReportCustomStack(e.StackTrace);
+                        InformationManager.DisplayMessage(new InformationMessage(e.ToString(), Error));
+                    }
+                }
+                
+                foreach (var hero in Hero.FindAll(hero => hero.CharacterObject != null && hero.CharacterObject.Culture != null && (hero.CharacterObject as BasicCharacterObject).Culture == null))
+                {
+                    try
+                    {
+
+                        if (!hero.CharacterObject.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(hero.CharacterObject);
+                        }
+                        (hero.CharacterObject as BasicCharacterObject).Culture = hero.CharacterObject.Culture;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.PrintError(e.Message, e.StackTrace);
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        Debug.SetCrashReportCustomString(e.Message);
+                        Debug.SetCrashReportCustomStack(e.StackTrace);
+                        InformationManager.DisplayMessage(new InformationMessage(e.ToString(), Error));
+                    }
+                }
+
+                foreach (var p in MobileParty.All.Where(p => p.LeaderHero != null && p.LeaderHero.CharacterObject != null && p.LeaderHero.CharacterObject.Culture != null && (p.LeaderHero.CharacterObject as BasicCharacterObject).Culture == null))
+                {
+                    try
+                    {
+
+                        if (!p.LeaderHero.CharacterObject.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(p.LeaderHero.CharacterObject);
+                        }
+
+                        (p.LeaderHero.CharacterObject as BasicCharacterObject).Culture = p.LeaderHero.CharacterObject.Culture;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.PrintError(e.Message, e.StackTrace);
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        Debug.SetCrashReportCustomString(e.Message);
+                        Debug.SetCrashReportCustomStack(e.StackTrace);
+                        InformationManager.DisplayMessage(new InformationMessage(e.ToString(), Error));
+                    }
+                }
+
+                foreach (var c in CharacterObject.All.Where(c => c != null && c.Culture != null && (c as BasicCharacterObject).Culture == null))
+                {
+                    try
+                    {
+                        if (!c.IsRegistered())
+                        {
+                            MBObjectManager.Instance.RegisterObject(c);
+                        }
+                        (c as BasicCharacterObject).Culture = c.Culture;
                     }
                     catch (Exception e)
                     {
@@ -184,5 +330,14 @@ namespace BannerlordRestartPlus
             }
         }
         #endregion
+    }
+
+    public static class RestartPlusExtensions
+    {
+        static PropertyInfo IsRegisteredProp = AccessTools.Property(typeof(MBObjectBase), nameof(IsRegistered));
+        public static bool IsRegistered(this MBObjectBase mBObjectBase)
+        {
+            return (bool) IsRegisteredProp.GetValue(mBObjectBase);
+        }
     }
 }

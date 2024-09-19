@@ -11,7 +11,6 @@ using TaleWorlds.ScreenSystem;
 
 namespace BannerlordRestartPlus.Patches.Runtime
 {
-
     public class CharacterCreationStatePatch : IRuntimePatch
     {
         public void PatchAfterMenus(Harmony harmony)
