@@ -18,6 +18,7 @@ using Debug = TaleWorlds.Library.Debug;
 using System.Reflection;
 using System;
 using Bannerlord.UIExtenderEx;
+using BannerlordRestartPlus.Behaviours;
 
 namespace BannerlordRestartPlus
 {
@@ -25,8 +26,8 @@ namespace BannerlordRestartPlus
     {
         /* Semantic Versioning (https://semver.org): */
         public static readonly int SemVerMajor = 0;
-        public static readonly int SemVerMinor = 2;
-        public static readonly int SemVerPatch = 1;
+        public static readonly int SemVerMinor = 3;
+        public static readonly int SemVerPatch = 0;
         public static readonly string? SemVerSpecial = null;
         private static readonly string SemVerEnd = (SemVerSpecial is not null) ? "-" + SemVerSpecial : string.Empty;
         public static readonly string Version = $"{SemVerMajor}.{SemVerMinor}.{SemVerPatch}{SemVerEnd}";

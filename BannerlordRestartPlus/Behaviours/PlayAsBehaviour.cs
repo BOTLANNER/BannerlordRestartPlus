@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 
 using BannerlordRestartPlus.Actions;
 using BannerlordRestartPlus.UI;
@@ -14,14 +12,12 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Encyclopedia;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Encyclopedia.Pages;
 using TaleWorlds.Core;
-using TaleWorlds.Engine;
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.Library;
-using TaleWorlds.Localization;
 using TaleWorlds.ScreenSystem;
 
-namespace BannerlordRestartPlus
+namespace BannerlordRestartPlus.Behaviours
 {
     public class PlayAsBehaviour : CampaignBehaviorBase
     {

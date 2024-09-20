@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Xml;
 
 using HarmonyLib;
 
-using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.ObjectSystem;
-
-using Debugger = System.Diagnostics.Debugger;
 
 namespace BannerlordRestartPlus.Patches
 {

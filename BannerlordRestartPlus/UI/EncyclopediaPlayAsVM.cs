@@ -1,6 +1,6 @@
 ﻿using System;
 
-using BannerlordRestartPlus.Actions;
+using BannerlordRestartPlus.Behaviours;
 
 using SandBox.GauntletUI.Encyclopedia;
 

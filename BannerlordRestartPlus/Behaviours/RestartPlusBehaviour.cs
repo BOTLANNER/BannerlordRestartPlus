@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 
 using BannerlordRestartPlus.Patches;
+using BannerlordRestartPlus.Saves;
 
 using HarmonyLib;
 
@@ -14,17 +15,20 @@ using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 
-namespace BannerlordRestartPlus
+namespace BannerlordRestartPlus.Behaviours
 {
     public class RestartPlusBehaviour : CampaignBehaviorBase
     {
         public static bool SuggestGameRestart = false;
 
         static MethodInfo? UpgradeTargetsSetMethod;
-        static void SetUpgradeTargets(CharacterObject current, CharacterObject[] value) => UpgradeTargetsSetMethod?.Invoke(current, new object[] { value });
+        public static void SetUpgradeTargets(CharacterObject current, CharacterObject[] value) => UpgradeTargetsSetMethod?.Invoke(current, new object[] { value });
 
         static Color Error = new(178 * 255, 34 * 255, 34 * 255);
         static Color Warn = new(189 * 255, 38 * 255, 0);
+
+        private PreviousPlayerCharacters _previousPlayerCharacters = new();
+        private bool HasLoaded { get; set; }
 
         static RestartPlusBehaviour()
         {
@@ -50,14 +54,64 @@ namespace BannerlordRestartPlus
             CampaignEvents.OnGameEarlyLoadedEvent.AddNonSerializedListener(this, this.EarlyLoad);
             CampaignEvents.OnGameLoadedEvent.AddNonSerializedListener(this, this.Loaded);
             CampaignEvents.OnGameLoadFinishedEvent.AddNonSerializedListener(this, this.LoadFinished);
+
+            CampaignEvents.OnNewGameCreatedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(OnNewGameCreated));
+            CampaignEvents.OnGameEarlyLoadedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(OnGameEarlyLoaded));
         }
 
         public override void SyncData(IDataStore dataStore)
         {
+            try
+            {
+                if (dataStore.IsSaving)
+                {
+                    _previousPlayerCharacters = PreviousPlayerCharacters.Instance ?? new PreviousPlayerCharacters();
+                }
+                dataStore.SyncData("RestartPlus_PreviousPlayerCharacters", ref _previousPlayerCharacters);
+                _previousPlayerCharacters ??= new PreviousPlayerCharacters();
+
+                if (!dataStore.IsSaving)
+                {
+                    OnLoad();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.PrintError(e.Message, e.StackTrace);
+                Debug.WriteDebugLineOnScreen(e.ToString());
+                Debug.SetCrashReportCustomString(e.Message);
+                Debug.SetCrashReportCustomStack(e.StackTrace);
+            }
         }
         #endregion
 
         #region Event Handlers
+
+        private void OnNewGameCreated(CampaignGameStarter starter)
+        {
+            try
+            {
+                OnLoad();
+            }
+            catch (Exception e) { Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); }
+
+        }
+
+        /* OnGameEarlyLoaded is only present so that we can still initialize when adding the mod to a save
+         * that didn't previously have it enabled (so-called "vanilla save"). This is because SyncData does
+         * not even get called during game loading for behaviors that were not previously not part of the save.
+         */
+        private void OnGameEarlyLoaded(CampaignGameStarter starter)
+        {
+            try
+            {
+                if (!HasLoaded) // if SyncData were to be called, it would've been by now
+                {
+                    OnLoad();
+                }
+            }
+            catch (Exception e) { Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); }
+        }
 
         private void EarlyLoad(CampaignGameStarter obj)
         {
@@ -330,6 +384,16 @@ namespace BannerlordRestartPlus
             }
         }
         #endregion
+
+        private void OnLoad()
+        {
+            _previousPlayerCharacters ??= new PreviousPlayerCharacters();
+            PreviousPlayerCharacters.Instance = _previousPlayerCharacters;
+
+            PreviousPlayerCharacters.Instance.OnLoad();
+
+            HasLoaded = true;
+        }
     }
 
     public static class RestartPlusExtensions

@@ -31,6 +31,7 @@ using TaleWorlds.SaveSystem.Load;
 using TaleWorlds.ScreenSystem;
 
 using FaceGen = TaleWorlds.Core.FaceGen;
+using BannerlordRestartPlus.Behaviours;
 
 namespace BannerlordRestartPlus.Actions
 {

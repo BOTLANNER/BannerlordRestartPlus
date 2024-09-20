@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 
 using BannerlordRestartPlus.Patches;
+using BannerlordRestartPlus.Saves;
 
 using HarmonyLib;
 
@@ -284,6 +285,7 @@ namespace BannerlordRestartPlus.Actions
 
             Campaign.Current.TimeControlMode = CampaignTimeControlMode.Stop;
 
+            PreviousPlayerCharacters.Instance?.CharacterChanged(oldHero);
             return position;
         }
     }

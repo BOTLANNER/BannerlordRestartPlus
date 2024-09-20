@@ -4,13 +4,9 @@ using System.Reflection;
 
 using HarmonyLib;
 
-using SandBox.View.CharacterCreation;
-
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
-using TaleWorlds.CampaignSystem.CharacterCreationContent;
 using TaleWorlds.Library;
-using TaleWorlds.ScreenSystem;
 
 namespace BannerlordRestartPlus.Patches.Runtime
 {

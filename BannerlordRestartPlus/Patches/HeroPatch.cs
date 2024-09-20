@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 using HarmonyLib;
 
-using Helpers;
-
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.CharacterDevelopment;
-using TaleWorlds.CampaignSystem.Extensions;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 
@@ -20,6 +14,7 @@ namespace BannerlordRestartPlus.Patches
     public static class HeroPatch
     {
         public static string StringIdWatch = "qwerty";
+        public static FieldInfo CharacterObjectFieldOnHero = AccessTools.Field(typeof(Hero), "_characterObject");
 
         static MethodInfo Set_battleEquipmentProperty = AccessTools.Property(typeof(Hero), "_battleEquipment").GetSetMethod(true);
         static MethodInfo Set_civilianEquipmentProperty = AccessTools.Property(typeof(Hero), "_civilianEquipment").GetSetMethod(true);

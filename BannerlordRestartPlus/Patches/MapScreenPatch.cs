@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-using BannerlordRestartPlus;
 using BannerlordRestartPlus.Actions;
 
 using HarmonyLib;
