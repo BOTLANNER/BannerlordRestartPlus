@@ -46,6 +46,12 @@ namespace BannerlordRestartPlus
         [SettingPropertyGroup("Restart+")]
         public bool PlaceAtOldPosition { get; set; } = false;
 
+        private const string AddOptionsOnRetire_Hint = "Adds new dialogue and menu options on retirement to choose to restart with new character in the same world (with or without current player staying in game as NPC) [ Default: ON ]";
+
+        [SettingPropertyBool("Add options on retirement", HintText = AddOptionsOnRetire_Hint, RequireRestart = false, Order = 5, IsToggle = false)]
+        [SettingPropertyGroup("Restart+")]
+        public bool AddOptionsOnRetire { get; set; } = true;
+
         private const string AllowCampaign_Hint = "Allows Restart+ for the Story mode campaign. (EXPERIMENTAL: Stability not guaranteed!) [ Default: OFF ]";
 
         [SettingPropertyBool("Allow for Story Campaign", HintText = AllowCampaign_Hint, RequireRestart = false, Order = 0, IsToggle = false)]
@@ -63,5 +69,11 @@ namespace BannerlordRestartPlus
         [SettingPropertyBool("Move existing character to same position", HintText = PlaceExistingAtOldPosition_Hint, RequireRestart = false, Order = 2, IsToggle = false)]
         [SettingPropertyGroup("Experimental")]
         public bool PlaceExistingAtOldPosition { get; set; } = false;
+
+        private const string PromptOnDeath_Hint = "Will prompt when the player dies to choose between Restart+ and default heir selection/game over behaviours. [ Default: ON ]";
+
+        [SettingPropertyBool("Prompt on player death", HintText = PromptOnDeath_Hint, RequireRestart = false, Order = 3, IsToggle = false)]
+        [SettingPropertyGroup("Experimental")]
+        public bool PromptOnDeath { get; set; } = true;
     }
 }

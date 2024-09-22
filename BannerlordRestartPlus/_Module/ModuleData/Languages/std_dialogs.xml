@@ -9,5 +9,9 @@
         <string id="restart_plus_03" text="The game needs to be restarted to avoid potential crashes. Do you want to close the game now?" />
         <string id="restart_plus_04" text="Play As" />
         <string id="restart_plus_05" text="Are you sure you want to play as {CHARACTER} in this game world?" />
+        <string id="restart_plus_06" text="It might be time for others to have their own stories now. (Restart+)" />
+        <string id="restart_plus_07" text="My story is over.It might be time for others to have their own stories now. (Retire and Restart+)" />
+        <string id="restart_plus_08" text="Retire (Restart+)" />
+        <string id="restart_plus_09" text="{CHARACTER} has died! Do you want to start over with a new character in this game world?" />
     </strings>
 </base>

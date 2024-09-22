@@ -18,7 +18,6 @@ using TaleWorlds.MountAndBlade.ViewModelCollection.EscapeMenu;
 
 namespace BannerlordRestartPlus.Patches
 {
-
     [HarmonyPatch(typeof(MapScreen))]
     public static class MapScreenPatch
     {

@@ -7,5 +7,7 @@
         <string id="restart_plus_h_01" text="RestartPlus: Not in an active game!" />
         <string id="restart_plus_h_02" text="RestartPlus: Story Campaign is not supported! Only Sandbox or modded game types are supported." />
         <string id="restart_plus_h_03" text="RestartPlus: Story needs to have reached a later phase in the campaign." />
+        <string id="restart_plus_h_04" text="RestartPlus: Start with new character in same world (Current character is still around)." />
+        <string id="restart_plus_h_05" text="RestartPlus: Current character retires and start with new character in same world (Current character is gone)." />
     </strings>
 </base>

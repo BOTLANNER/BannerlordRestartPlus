@@ -41,6 +41,8 @@ namespace BannerlordRestartPlus.Actions
         static RestartPlusAction? _instance = null;
         internal static RestartPlusAction Instance => (_instance ??= new RestartPlusAction());
 
+        public static Action<Hero, Hero>? PostApply = null;
+
         static FieldInfo ActiveSaveSlotNameField = AccessTools.Field(typeof(MBSaveLoad), "ActiveSaveSlotName");
         static MethodInfo GetNextAvailableSaveNameMethod = AccessTools.Method(typeof(MBSaveLoad), "GetNextAvailableSaveName");
 
@@ -65,6 +67,7 @@ namespace BannerlordRestartPlus.Actions
         private RestartPlusAction() { }
         private void ApplyInternal(bool isSaveSuccessful, string newSaveGameName)
         {
+            Hero oldHero = Hero.MainHero;
             CampaignEvents.OnSaveOverEvent.ClearListeners(this);
 
             if (!isSaveSuccessful)
@@ -204,6 +207,12 @@ namespace BannerlordRestartPlus.Actions
                 FaceGen.ShowDebugValues = true;
                 ScreenManager.PushScreen(new InGameBodyGeneratorScreen(tempMain.CharacterObject, false, null, () =>
                 {
+                    if (PostApply != null)
+                    {
+                        PostApply.Invoke(oldHero, tempMain);
+                        PostApply = null;
+                    }
+
                     CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(this, new Action<bool, string>(this.LoadInternal));
 
                     Campaign.Current.SaveHandler.SaveAs(newSaveGameName.Replace(new TextObject("{=restart_plus_n_02} (auto)").ToString(), new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString()));
@@ -212,6 +221,12 @@ namespace BannerlordRestartPlus.Actions
             }
             else
             {
+                if (PostApply != null)
+                {
+                    PostApply.Invoke(oldHero, tempMain);
+                    PostApply = null;
+                }
+
                 CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(this, new Action<bool, string>(this.LoadInternal));
 
                 Campaign.Current.SaveHandler.SaveAs(newSaveGameName.Replace(new TextObject("{=restart_plus_n_02} (auto)").ToString(), new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString()));

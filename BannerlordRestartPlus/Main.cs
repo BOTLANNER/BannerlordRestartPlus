@@ -166,6 +166,7 @@ namespace BannerlordRestartPlus
             {
                 gameInitializer.AddBehavior(new RestartPlusBehaviour());
                 gameInitializer.AddBehavior(new PlayAsBehaviour());
+                gameInitializer.AddBehavior(new ExtendedRetirementBehaviour());
             }
             catch (System.Exception e) { Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); }
         }
@@ -176,6 +177,12 @@ namespace BannerlordRestartPlus
             {
                 if (sender is Settings settings && args.PropertyName == MCM.Abstractions.Base.BaseSettings.SaveTriggered)
                 {
+                    var extendedRetirementBehaviour = ExtendedRetirementBehaviour.Instance;
+                    var campaignGameStarter = Campaign.Current != null && Game.Current != null ?  SandBoxManager.Instance?.GameStarter : null;
+                    if (extendedRetirementBehaviour != null && campaignGameStarter != null)
+                    {
+                        extendedRetirementBehaviour.SetupGameMenus(campaignGameStarter);
+                    }
                 }
             }
             catch (System.Exception e) { Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); }

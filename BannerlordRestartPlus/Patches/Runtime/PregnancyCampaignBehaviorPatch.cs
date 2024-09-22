@@ -10,6 +10,7 @@ using TaleWorlds.Library;
 
 namespace BannerlordRestartPlus.Patches.Runtime
 {
+
     public class PregnancyCampaignBehaviorPatch : IRuntimePatch
     {
         public void PatchAfterMenus(Harmony harmony)

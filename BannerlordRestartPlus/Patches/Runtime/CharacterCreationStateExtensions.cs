@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 
 using BannerlordRestartPlus.Actions;
+using BannerlordRestartPlus.Saves;
 
 using HarmonyLib;
 
@@ -83,6 +84,20 @@ namespace BannerlordRestartPlus.Patches.Runtime
             if (!saveName.EndsWith(new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString()))
             {
                 saveName += new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString();
+            }
+
+            if (RestartPlusAction.PostApply != null)
+            {
+                var oldPlayer = PreviousPlayerCharacters.Instance?.History?.LastOrDefault();
+                if (oldPlayer?.Hero != null)
+                {
+                    var oldHero = oldPlayer.Hero;
+                    if (oldHero.IsActive && !oldHero.IsDead && !oldHero.IsDisabled)
+                    {
+                        RestartPlusAction.PostApply.Invoke(oldHero, Hero.MainHero);
+                        RestartPlusAction.PostApply = null;
+                    }
+                }
             }
 
             Campaign.Current.SaveHandler.SaveAs(saveName);

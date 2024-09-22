@@ -22,5 +22,8 @@
         <string id="restart_plus_n_16" text="RestartPlus: {CHARACTER} is already dead." />
         <string id="restart_plus_n_17" text="RestartPlus: {CHARACTER} is too young." />
         <string id="restart_plus_n_18" text="RestartPlus: Playing as existing characters is disabled." />
+        <string id="restart_plus_n_19" text="RestartPlus: Support for retirement is disabled." />
+        <string id="restart_plus_n_20" text="RestartPlus: Finalising player death." />
+        <string id="restart_plus_n_21" text="RestartPlus: Finalising player retirement." />
     </strings>
 </base>

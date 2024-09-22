@@ -45,10 +45,11 @@ namespace BannerlordRestartPlus.Actions
         public static Vec2 Apply(Hero newHero)
         {
             var oldHero = Hero.MainHero;
+            var oldMainHero = Hero.FindFirst(h => h.StringId == "main_hero");
 
             Vec2 position = oldHero.PartyBelongedTo.Position2D;
-            var id = oldHero.StringId;
-            var charId = oldHero.CharacterObject.StringId;
+            var id = oldMainHero.StringId;
+            var charId = oldMainHero.CharacterObject.StringId;
             var clanId = oldHero.Clan.StringId;
             var oldPartyId = oldHero.PartyBelongedTo.StringId;
             var oldCharacterSkills = HeroCreatorPatch.DefaultCharacterSkills.GetValue(oldHero.CharacterObject) as MBCharacterSkills;
@@ -67,28 +68,36 @@ namespace BannerlordRestartPlus.Actions
             //Campaign.Current.ObjectManager.UnregisterObject(oldHero.PartyBelongedTo);
             var replacementPartyId = string.Concat("player_party_is_now_ai_", oldHero.CharacterObject.StringId, newHero.CharacterObject.StringId);
             Campaign.Current.ObjectManager.UpdateRegistration(oldHero.PartyBelongedTo, replacementPartyId);
-            Debug.Assert(oldHero.PartyBelongedTo.StringId == replacementPartyId, "Registered id not updated correctly: " + replacementPartyId + " " + oldHero.PartyBelongedTo.StringId);
+            if (oldMainHero != oldHero && oldMainHero.PartyBelongedTo != null)
+            {
+                Campaign.Current.ObjectManager.UpdateRegistration(oldMainHero.PartyBelongedTo, string.Concat(replacementPartyId, oldMainHero.CharacterObject.StringId));
+
+            }
 
             var replacementHeroId = string.Concat("player_is_now_ai_", oldHero.StringId, newHero.StringId);
             Campaign.Current.ObjectManager.UpdateRegistration(oldHero, replacementHeroId);
-            Debug.Assert(oldHero.StringId == replacementHeroId, "Registered id not updated correctly: " + replacementHeroId + " " + oldHero.StringId);
+            if (oldMainHero != oldHero)
+            {
+                Campaign.Current.ObjectManager.UpdateRegistration(oldMainHero, string.Concat(replacementHeroId, oldMainHero.StringId));
+            }
             //oldHero.StringId = string.Concat("player_is_now_ai_", oldHero.StringId, newHero.StringId);
             //newHero.StringId = id;
             Campaign.Current.ObjectManager.UpdateRegistration(newHero, id);
-            Debug.Assert(newHero.StringId == id, "Registered id not updated correctly: " + id + " " + newHero.StringId);
 
             //Campaign.Current.ObjectManager.UnregisterObject(oldHero.CharacterObject);
             //oldHero.CharacterObject.StringId = string.Concat("player_char_is_now_ai_", oldHero.CharacterObject.StringId, newHero.CharacterObject.StringId);
             //Campaign.Current.ObjectManager.UnregisterObject(oldHero.CharacterObject);
             var replacementCharId = string.Concat("player_char_is_now_ai_", oldHero.CharacterObject.StringId, newHero.CharacterObject.StringId);
             Campaign.Current.ObjectManager.UpdateRegistration(oldHero.CharacterObject, replacementCharId);
-            Debug.Assert(oldHero.CharacterObject.StringId == replacementCharId, "Registered id not updated correctly: " + replacementCharId + " " + oldHero.CharacterObject.StringId);
+            if (oldMainHero != oldHero)
+            {
+                Campaign.Current.ObjectManager.UpdateRegistration(oldMainHero.CharacterObject, string.Concat(replacementCharId, oldMainHero.CharacterObject.StringId));
+            }
 
             //Campaign.Current.ObjectManager.UnregisterObject(newHero.CharacterObject);
             //newHero.CharacterObject.StringId = charId;
             //Campaign.Current.ObjectManager.RegisterObject<CharacterObject>(newHero.CharacterObject);
             Campaign.Current.ObjectManager.UpdateRegistration(newHero.CharacterObject, charId);
-            Debug.Assert(newHero.CharacterObject.StringId == charId, "Registered id not updated correctly: " + charId + " " + newHero.CharacterObject.StringId);
 
 
             //Campaign.Current.ObjectManager.RegisterObject<CharacterObject>(oldHero.CharacterObject);
@@ -99,10 +108,12 @@ namespace BannerlordRestartPlus.Actions
             //newHero.Clan.StringId = clanId;
             var replacementClanId = string.Concat("player_clan_now_ai_", oldHero.StringId, newHero.Clan.StringId);
             Campaign.Current.ObjectManager.UpdateRegistration(oldHero.Clan, replacementClanId);
-            Debug.Assert(oldHero.Clan.StringId == replacementClanId, "Registered id not updated correctly: " + replacementClanId + " " + oldHero.Clan.StringId);
+            if (oldMainHero != oldHero && oldMainHero.Clan != oldHero.Clan)
+            {
+                Campaign.Current.ObjectManager.UpdateRegistration(oldMainHero.Clan, string.Concat(replacementClanId, oldMainHero.Clan.StringId));
+            }
 
             Campaign.Current.ObjectManager.UpdateRegistration(newHero.Clan, clanId);
-            Debug.Assert(newHero.Clan.StringId == clanId, "Registered id not updated correctly: " + clanId + " " + newHero.Clan.StringId);
 
             if (Hero.MainHero.CurrentSettlement != null && !Hero.MainHero.IsPrisoner)
             {
@@ -231,7 +242,6 @@ namespace BannerlordRestartPlus.Actions
             //newHero.PartyBelongedTo.StringId = oldPartyId;
             //Campaign.Current.ObjectManager.RegisterObject(newHero.PartyBelongedTo);
             Campaign.Current.ObjectManager.UpdateRegistration(newHero.PartyBelongedTo, oldPartyId);
-            Debug.Assert(newHero.PartyBelongedTo.StringId == oldPartyId, "Registered id not updated correctly: " + oldPartyId + " " + newHero.PartyBelongedTo.StringId);
 
 
             if (isMainPartyChanged)

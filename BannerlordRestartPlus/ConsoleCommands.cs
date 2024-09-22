@@ -9,6 +9,8 @@ using TaleWorlds.Core;
 using StoryMode;
 using BannerlordRestartPlus.Actions;
 using TaleWorlds.CampaignSystem.Party;
+using TaleWorlds.CampaignSystem.Settlements;
+using TaleWorlds.CampaignSystem.Actions;
 
 namespace BannerlordRestartPlus
 {
@@ -23,6 +25,8 @@ Commands:
 
 restart_plus.help                              - Shows console command usage
 restart_plus.restart                           - Creates a new main character in the current game world based on MCM config
+restart_plus.kill_player                       - Kills the main character and if enabled in MCM config will trigger the Restart+ options.
+restart_plus.retire                            - Causes the main character to retire from the game and if enabled in MCM config will trigger the Restart+ options.
 restart_plus.list_kingdoms                     - List all supported kingdom names for use with restart_plus.play_as_ruler
 restart_plus.play_as_ruler      kingdomName    - Play as the current ruler for the specified kingdom name (Call restart_plus.list_kingdoms for all supported kingdom names)
 restart_plus.list_clans                        - List all supported clan names for use with restart_plus.play_as_leader
@@ -32,6 +36,152 @@ restart_plus.play_as_leader     clanName       - Play as the current leader for 
 ";
 
             return helpResponse;
+        }
+
+        [CommandLineArgumentFunction("kill_player", "restart_plus")]
+        public static string KillPlayer(List<string> args)
+        {
+            try
+            {
+                if (Main.Settings != null && Main.Settings.Enabled)
+                {
+                    TextObject disableReason = TextObject.Empty;
+
+                    if (Game.Current == null || Campaign.Current == null || Hero.MainHero == null)
+                    {
+                        disableReason = new TextObject("{=restart_plus_h_01}RestartPlus: Not in an active game!");
+                        return disableReason.ToString();
+                    }
+
+                    try
+                    {
+                        if (Game.Current?.GameType is CampaignStoryMode && !Main.Settings.AllowCampaign)
+                        {
+                            disableReason = new TextObject("{=restart_plus_h_02}RestartPlus: Story Campaign is not supported! Only Sandbox or modded game types are supported.");
+                            return disableReason.ToString();
+                        }
+                        else if (Game.Current?.GameType is CampaignStoryMode && !StoryModeManager.Current.MainStoryLine.IsFirstPhaseCompleted)
+                        {
+                            disableReason = new TextObject("{=restart_plus_h_03}RestartPlus: Story needs to have reached a later phase in the campaign.");
+                            return disableReason.ToString();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.PrintError(e.Message, e.StackTrace);
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        Debug.SetCrashReportCustomString(e.Message);
+                        Debug.SetCrashReportCustomStack(e.StackTrace);
+
+                        disableReason = new TextObject(e.Message);
+                        return disableReason.ToString();
+                    }
+
+                    if (Hero.MainHero.CurrentSettlement != null || MobileParty.MainParty.MapEvent != null)
+                    {
+                        disableReason = new TextObject("{=restart_plus_n_05}RestartPlus: Not available. Current main character is busy (either in a settlement, in an encounter, or is a prisoner).");
+                        return disableReason.ToString();
+                    }
+
+                    try
+                    {
+                        KillCharacterAction.ApplyByDeathMark(Hero.MainHero, true);
+
+                        return new TextObject("{=restart_plus_n_20}RestartPlus: Finalising player death.").ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        return e.ToString();
+                    }
+                }
+                else
+                {
+                    return new TextObject("{=restart_plus_n_08}Restart+ not enabled!").ToString();
+                }
+            }
+            catch (System.Exception e)
+            {
+                return e.ToString();
+            }
+        }
+
+        [CommandLineArgumentFunction("retire", "restart_plus")]
+        public static string Retire(List<string> args)
+        {
+            try
+            {
+                if (Main.Settings != null && Main.Settings.Enabled)
+                {
+                    TextObject disableReason = TextObject.Empty;
+
+                    if (Game.Current == null || Campaign.Current == null || Hero.MainHero == null)
+                    {
+                        disableReason = new TextObject("{=restart_plus_h_01}RestartPlus: Not in an active game!");
+                        return disableReason.ToString();
+                    }
+
+                    try
+                    {
+                        if (Game.Current?.GameType is CampaignStoryMode && !Main.Settings.AllowCampaign)
+                        {
+                            disableReason = new TextObject("{=restart_plus_h_02}RestartPlus: Story Campaign is not supported! Only Sandbox or modded game types are supported.");
+                            return disableReason.ToString();
+                        }
+                        else if (Game.Current?.GameType is CampaignStoryMode && !StoryModeManager.Current.MainStoryLine.IsFirstPhaseCompleted)
+                        {
+                            disableReason = new TextObject("{=restart_plus_h_03}RestartPlus: Story needs to have reached a later phase in the campaign.");
+                            return disableReason.ToString();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.PrintError(e.Message, e.StackTrace);
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        Debug.SetCrashReportCustomString(e.Message);
+                        Debug.SetCrashReportCustomStack(e.StackTrace);
+
+                        disableReason = new TextObject(e.Message);
+                        return disableReason.ToString();
+                    }
+
+                    if (Hero.MainHero.CurrentSettlement != null || MobileParty.MainParty.MapEvent != null)
+                    {
+                        disableReason = new TextObject("{=restart_plus_n_05}RestartPlus: Not available. Current main character is busy (either in a settlement, in an encounter, or is a prisoner).");
+                        return disableReason.ToString();
+                    }
+
+                    try
+                    {
+                        var retirementSettlement = Settlement.Find("retirement_retreat");
+                        if (retirementSettlement != null)
+                        {
+                            retirementSettlement.IsVisible = true;
+                            RetirementSettlementComponent? settlementComponent = retirementSettlement.SettlementComponent as RetirementSettlementComponent;
+                            if (!(settlementComponent?.IsSpotted ?? true))
+                            {
+                                settlementComponent.IsSpotted = true;
+                            }
+                            EncounterManager.StartSettlementEncounter(MobileParty.MainParty, retirementSettlement);
+                        }
+
+                        return new TextObject("{=restart_plus_n_21}RestartPlus: Finalising player retirement.").ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteDebugLineOnScreen(e.ToString());
+                        return e.ToString();
+                    }
+                }
+                else
+                {
+                    return new TextObject("{=restart_plus_n_08}Restart+ not enabled!").ToString();
+                }
+            }
+            catch (System.Exception e)
+            {
+                return e.ToString();
+            }
         }
 
         [CommandLineArgumentFunction("restart", "restart_plus")]
