@@ -101,7 +101,7 @@ namespace BannerlordRestartPlus.Behaviours
                 }
                 if (newPage == EncyclopediaPages.Hero)
                 {
-                    GauntletMapEncyclopediaView encyclopediaScreenManager = MapScreen.Instance.EncyclopediaScreenManager as GauntletMapEncyclopediaView;
+                    var encyclopediaScreenManager = MapScreen.Instance.EncyclopediaScreenManager as GauntletMapEncyclopediaView;
                     if (encyclopediaScreenManager != null)
                     {
                         var encyclopediaData = AccessTools.Field(encyclopediaScreenManager.GetType(), "_encyclopediaData").GetValue(encyclopediaScreenManager) as EncyclopediaData;

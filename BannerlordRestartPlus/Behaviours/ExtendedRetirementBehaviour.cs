@@ -257,7 +257,7 @@ namespace BannerlordRestartPlus.Behaviours
             if (Main.Settings != null && Main.Settings.Enabled)
             {
                 bool enabled = true;
-                TextObject disableReason = null;
+                TextObject? disableReason = null;
 
                 if (!Main.Settings.AddOptionsOnRetire)
                 {

@@ -1,6 +1,8 @@
 ﻿
 using System;
 
+using HarmonyLib;
+
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection;
 using TaleWorlds.Engine;
@@ -12,78 +14,27 @@ using TaleWorlds.ScreenSystem;
 
 namespace BannerlordRestartPlus.UI
 {
-    [OverrideView(typeof(FaceGeneratorScreen))]
-    public class InGameBodyGeneratorScreen : ScreenBase, IFaceGeneratorScreen
+    public class InGameBodyGeneratorScreen : GauntletBodyGeneratorScreen
     {
-        private const int ViewOrderPriority = 15;
+        internal readonly Action? onComplete;
 
-        private readonly BodyGeneratorView _facegenLayer;
-        private readonly Action? onComplete;
-
-        public IFaceGeneratorHandler Handler
+        public InGameBodyGeneratorScreen(BasicCharacterObject character, bool openedFromMultiplayer, IFaceGeneratorCustomFilter? filter, Action? onComplete): base(character, openedFromMultiplayer, filter)
         {
-            get
-            {
-                return this._facegenLayer;
-            }
-        }
-
-        public InGameBodyGeneratorScreen(BasicCharacterObject character, bool openedFromMultiplayer, IFaceGeneratorCustomFilter? filter, Action? onComplete = null)
-        {
-            this._facegenLayer = new BodyGeneratorView(new ControlCharacterCreationStage(this.OnExit), GameTexts.FindText("str_done", null), new ControlCharacterCreationStage(this.OnExit), GameTexts.FindText("str_cancel", null), character, openedFromMultiplayer, filter, null, null, null, null, null);
             this.onComplete = onComplete;
         }
+    }
 
-        protected override void OnActivate()
+    [HarmonyPatch(typeof(GauntletBodyGeneratorScreen))]
+    public static class GauntletBodyGeneratorScreenPatch
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(OnExit))]
+        public static void OnExit(ref GauntletBodyGeneratorScreen __instance)
         {
-            base.OnActivate();
-            base.AddLayer(this._facegenLayer.SceneLayer);
-        }
-
-        protected override void OnDeactivate()
-        {
-            base.OnDeactivate();
-            this._facegenLayer.OnFinalize();
-            LoadingWindow.EnableGlobalLoadingWindow();
-            MBInformationManager.HideInformations();
-            Mission current = Mission.Current;
-            if (current != null)
+            if (__instance is InGameBodyGeneratorScreen inGameBodyGeneratorScreen)
             {
-                foreach (Agent agent in current.Agents)
-                {
-                    agent.EquipItemsFromSpawnEquipment(false);
-                    agent.UpdateAgentProperties();
-                }
+                inGameBodyGeneratorScreen?.onComplete?.Invoke();
             }
-        }
-
-        public void OnExit()
-        {
-            ScreenManager.PopScreen();
-            this.onComplete?.Invoke();
-        }
-
-        protected override void OnFinalize()
-        {
-            base.OnFinalize();
-            if (LoadingWindow.GetGlobalLoadingWindowState())
-            {
-                LoadingWindow.DisableGlobalLoadingWindow();
-            }
-            Game.Current.GameStateManager.UnregisterActiveStateDisableRequest(this);
-        }
-
-        protected override void OnFrameTick(float dt)
-        {
-            base.OnFrameTick(dt);
-            this._facegenLayer.OnTick(dt);
-        }
-
-        protected override void OnInitialize()
-        {
-            base.OnInitialize();
-            Game.Current.GameStateManager.RegisterActiveStateDisableRequest(this);
-            base.AddLayer(this._facegenLayer.GauntletLayer);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace BannerlordRestartPlus.Patches.Runtime
             return true;
         }
 
-        public static Exception FixHandleEscapeMenu(ref Exception __exception)
+        public static Exception? FixHandleEscapeMenu(ref Exception __exception)
         {
             if (__exception != null)
             {

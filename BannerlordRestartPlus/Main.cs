@@ -27,7 +27,7 @@ namespace BannerlordRestartPlus
         /* Semantic Versioning (https://semver.org): */
         public static readonly int SemVerMajor = 0;
         public static readonly int SemVerMinor = 3;
-        public static readonly int SemVerPatch = 0;
+        public static readonly int SemVerPatch = 1;
         public static readonly string? SemVerSpecial = null;
         private static readonly string SemVerEnd = (SemVerSpecial is not null) ? "-" + SemVerSpecial : string.Empty;
         public static readonly string Version = $"{SemVerMajor}.{SemVerMinor}.{SemVerPatch}{SemVerEnd}";
@@ -41,11 +41,11 @@ namespace BannerlordRestartPlus
         internal static Settings? Settings;
 
         private bool _loaded;
-        public static Harmony Harmony;
+        public static Harmony? Harmony;
         private UIExtender? _extender;
 
 
-        private static readonly IOptionalPatch[] HarmonyOptionalPatches;
+        private static readonly IOptionalPatch[] HarmonyOptionalPatches = new IOptionalPatch[] { };
         private static List<IRuntimePatch> HarmonyRuntimePatches = LoadRuntimePatches().ToList();
 
         public Main()
@@ -119,7 +119,7 @@ namespace BannerlordRestartPlus
                     Settings.PropertyChanged += Settings_OnPropertyChanged;
                 }
 
-                if (!_loaded)
+                if (!_loaded && Harmony != null)
                 {
                     InformationManager.DisplayMessage(new InformationMessage($"Loaded {DisplayName}", ImportantTextColor));
                     _loaded = true;
