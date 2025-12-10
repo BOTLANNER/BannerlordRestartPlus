@@ -129,7 +129,7 @@
 
 //        [HarmonyFinalizer]
 //        [HarmonyPatch(nameof(InitializeHeroBasicCharacterOnAfterLoad))]
-//        public static Exception? InitializeHeroBasicCharacterOnAfterLoad(ref Exception? __exception)
+//        public static Exception? InitializeHeroBasicCharacterOnAfterLoad(Exception? __exception)
 //        {
 //            if (__exception != null)
 //            {
@@ -600,7 +600,7 @@
 
 //        [HarmonyFinalizer]
 //        [HarmonyPatch(nameof(Deserialize))]
-//        public static Exception? Deserialize(ref Exception? __exception)
+//        public static Exception? Deserialize(Exception? __exception)
 //        {
 //            if (__exception != null)
 //            {

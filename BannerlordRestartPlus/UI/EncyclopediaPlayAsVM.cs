@@ -171,7 +171,7 @@ namespace BannerlordRestartPlus.UI
 
             if (disableReason == null)
             {
-                disableReason = TextObject.Empty;
+                disableReason = TextObject.GetEmpty();
                 IsPlayAsAllowed = true;
             }
             else

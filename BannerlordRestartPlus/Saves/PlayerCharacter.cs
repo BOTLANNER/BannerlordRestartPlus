@@ -104,7 +104,7 @@ namespace BannerlordRestartPlus.Saves
 
                 if (c.Culture == null)
                 {
-                    c.Culture = this.Culture;
+                    (c as BasicCharacterObject).Culture = this.Culture;
                 }
 
                 if ((c as BasicCharacterObject).Culture == null)

@@ -36,6 +36,7 @@ namespace BannerlordRestartPlus.Behaviours
         private GauntletLayer? gauntletLayer;
 
         private IGauntletMovie? gauntletMovie;
+        private GauntletMovieIdentifier? gauntletMovieIdentifier;
 
         static Color Error = new(178 * 255, 34 * 255, 34 * 255);
         static Color Warn = new(189 * 255, 38 * 255, 0);
@@ -92,12 +93,13 @@ namespace BannerlordRestartPlus.Behaviours
                 if (this.gauntletLayerTopScreen != null && this.gauntletLayer != null)
                 {
                     this.gauntletLayerTopScreen.RemoveLayer(this.gauntletLayer);
-                    if (this.gauntletMovie != null)
+                    if (this.gauntletMovieIdentifier != null)
                     {
-                        this.gauntletLayer.ReleaseMovie(this.gauntletMovie);
+                        this.gauntletLayer.ReleaseMovie(this.gauntletMovieIdentifier);
                     }
                     this.gauntletLayerTopScreen = null;
                     this.gauntletMovie = null;
+                    this.gauntletMovieIdentifier = null;
                 }
                 if (newPage == EncyclopediaPages.Hero)
                 {
@@ -117,10 +119,11 @@ namespace BannerlordRestartPlus.Behaviours
                             {
                                 return;
                             }
-                            this.gauntletLayer = new GauntletLayer(716, "GauntletLayer", false);
+                            this.gauntletLayer = new GauntletLayer("GauntletLayer", 716, false);
                             this.playAsVM = new EncyclopediaPlayAsVM(this.selectedHero, encyclopediaScreenManager);
 
-                            this.gauntletMovie = this.gauntletLayer.LoadMovie("EncyclopediaHeroPagePlayAs", this.playAsVM);
+                            this.gauntletMovieIdentifier = this.gauntletLayer.LoadMovie("EncyclopediaHeroPagePlayAs", this.playAsVM);
+                            this.gauntletMovie = this.gauntletMovieIdentifier.Movie;
                             this.gauntletLayerTopScreen = ScreenManager.TopScreen;
                             this.gauntletLayerTopScreen.AddLayer(this.gauntletLayer);
                             this.gauntletLayer.InputRestrictions.SetInputRestrictions(true, InputUsageMask.MouseButtons);

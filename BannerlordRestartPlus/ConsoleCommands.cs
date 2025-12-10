@@ -45,7 +45,7 @@ restart_plus.play_as_leader     clanName       - Play as the current leader for 
             {
                 if (Main.Settings != null && Main.Settings.Enabled)
                 {
-                    TextObject disableReason = TextObject.Empty;
+                    TextObject disableReason = TextObject.GetEmpty();
 
                     if (Game.Current == null || Campaign.Current == null || Hero.MainHero == null)
                     {
@@ -113,7 +113,7 @@ restart_plus.play_as_leader     clanName       - Play as the current leader for 
             {
                 if (Main.Settings != null && Main.Settings.Enabled)
                 {
-                    TextObject disableReason = TextObject.Empty;
+                    TextObject disableReason = TextObject.GetEmpty();
 
                     if (Game.Current == null || Campaign.Current == null || Hero.MainHero == null)
                     {
@@ -191,7 +191,7 @@ restart_plus.play_as_leader     clanName       - Play as the current leader for 
             {
                 if (Main.Settings != null && Main.Settings.Enabled)
                 {
-                    TextObject disableReason = TextObject.Empty;
+                    TextObject disableReason = TextObject.GetEmpty();
 
                     if (Game.Current == null || Campaign.Current == null || Hero.MainHero == null)
                     {
@@ -326,7 +326,7 @@ restart_plus.play_as_leader     clanName       - Play as the current leader for 
                     {
                         if (Main.Settings != null && Main.Settings.Enabled)
                         {
-                            TextObject disableReason = TextObject.Empty;
+                            TextObject disableReason = TextObject.GetEmpty();
 
                             if (!Main.Settings.PlayAsExisting)
                             {
@@ -461,7 +461,7 @@ restart_plus.play_as_leader     clanName       - Play as the current leader for 
                     {
                         if (Main.Settings != null && Main.Settings.Enabled)
                         {
-                            TextObject disableReason = TextObject.Empty;
+                            TextObject disableReason = TextObject.GetEmpty();
 
                             if (!Main.Settings.PlayAsExisting)
                             {

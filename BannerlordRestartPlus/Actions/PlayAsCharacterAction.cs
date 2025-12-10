@@ -31,9 +31,6 @@ namespace BannerlordRestartPlus.Actions
         static PlayAsCharacterAction? _instance = null;
         internal static PlayAsCharacterAction Instance => (_instance ??= new PlayAsCharacterAction());
 
-        static FieldInfo ActiveSaveSlotNameField = AccessTools.Field(typeof(MBSaveLoad), "ActiveSaveSlotName");
-        static MethodInfo GetNextAvailableSaveNameMethod = AccessTools.Method(typeof(MBSaveLoad), "GetNextAvailableSaveName");
-
 
         public static void Apply(Hero character)
         {
@@ -54,11 +51,11 @@ namespace BannerlordRestartPlus.Actions
                 Instance.ApplyInternal(character, isSaveSuccessful, newSaveGameName);
             });
 
-            string saveName = (string) ActiveSaveSlotNameField.GetValue(null);
+            string saveName = (string) RestartPlusAction.ActiveSaveSlotNameProp.GetValue(null);
             if (saveName == null)
             {
-                saveName = (string) GetNextAvailableSaveNameMethod.Invoke(null, new object[] { });
-                ActiveSaveSlotNameField.SetValue(null, saveName);
+                saveName = (string) RestartPlusAction.GetNextAvailableSaveNameMethod.Invoke(null, new object[] { });
+                RestartPlusAction.ActiveSaveSlotNameProp.SetValue(null, saveName);
             }
             Campaign.Current.SaveHandler.SaveAs(saveName + new TextObject("{=restart_plus_n_02} (auto)").ToString());
         }
@@ -166,14 +163,14 @@ namespace BannerlordRestartPlus.Actions
             Campaign.Current.LogEntryHistory.DeleteOutdatedLogs();
             Campaign.Current.LogEntryHistory.GameActionLogs.Clear();
 
-            var mainPos = Hero.MainHero.GetPosition().AsVec2;
+            var mainPos = Hero.MainHero.GetCampaignPosition();
 
             var position = ChangePlayerCharacterInGameAction.Apply(tempMain);
             Campaign.Current.TimeControlMode = CampaignTimeControlMode.Stop;
 
             if (Main.Settings!.PlaceExistingAtOldPosition && tempMain.PartyBelongedTo != null)
             {
-                tempMain.PartyBelongedTo.Position2D = mainPos;
+                tempMain.PartyBelongedTo.Position = mainPos;
             }
 
 

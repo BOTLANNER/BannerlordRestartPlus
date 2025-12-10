@@ -45,7 +45,7 @@ namespace BannerlordRestartPlus.Patches.Runtime
             }
         }
 
-        public static Exception? FixCheckOffspringsToDeliver(ref Exception? __exception, ref PregnancyCampaignBehavior __instance, Hero hero, ref IList ____heroPregnancies)
+        public static Exception? FixCheckOffspringsToDeliver(Exception? __exception, ref PregnancyCampaignBehavior __instance, Hero hero, ref IList ____heroPregnancies)
         {
             if (__exception != null)
             {
@@ -110,7 +110,7 @@ namespace BannerlordRestartPlus.Patches.Runtime
         //    }
         //}
 
-        //public static Exception? FixCheckOffspringsToDeliverInternal(ref Exception? __exception)
+        //public static Exception? FixCheckOffspringsToDeliverInternal(Exception? __exception)
         //{
         //    if (__exception != null)
         //    {

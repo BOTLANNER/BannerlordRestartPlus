@@ -36,18 +36,18 @@ namespace BannerlordRestartPlus.Actions
 
         static MethodInfo SetPlayerTraitDeveloperMethod = AccessTools.Property(typeof(Campaign), "PlayerTraitDeveloper").GetSetMethod(true);
 
-        static void SetPlayerTraitDeveloper(this Campaign current, HeroTraitDeveloper value) => SetPlayerTraitDeveloperMethod.Invoke(current, new object[] { value });
+        static void SetPlayerTraitDeveloper(this Campaign current, PropertyOwner<PropertyObject> value) => SetPlayerTraitDeveloperMethod.Invoke(current, new object[] { value });
 
-        static HeroTraitDeveloper CreateHeroTraitDeveloper(Hero hero) => (HeroTraitDeveloper) AccessTools.DeclaredConstructor(typeof(HeroTraitDeveloper), new[] { typeof(Hero) }).Invoke(new object[] { hero });
-        static LordPartyComponent CreateLordPartyComponent(Hero hero, Hero hero2) => (LordPartyComponent) AccessTools.DeclaredConstructor(typeof(LordPartyComponent), new[] { typeof(Hero), typeof(Hero) }).Invoke(new object[] { hero, hero2 });
+        //static PropertyOwner<PropertyObject> CreateHeroTraitDeveloper(Hero? hero = null) => new PropertyOwner<PropertyObject>(); //(PropertyOwner<PropertyObject>) AccessTools.DeclaredConstructor(typeof(PropertyOwner<PropertyObject>), new[] { typeof(Hero) }).Invoke(new object[] { hero });
+        //static LordPartyComponent CreateLordPartyComponent(Hero hero, Hero hero2) => (LordPartyComponent) AccessTools.DeclaredConstructor(typeof(LordPartyComponent), new[] { typeof(Hero), typeof(Hero) }).Invoke(new object[] { hero, hero2 });
 
 
-        public static Vec2 Apply(Hero newHero)
+        public static CampaignVec2 Apply(Hero newHero)
         {
             var oldHero = Hero.MainHero;
             var oldMainHero = Hero.FindFirst(h => h.StringId == "main_hero");
 
-            Vec2 position = oldHero.PartyBelongedTo.Position2D;
+            CampaignVec2 position = oldHero.PartyBelongedTo.Position;
             var id = oldMainHero.StringId;
             var charId = oldMainHero.CharacterObject.StringId;
             var clanId = oldHero.Clan.StringId;
@@ -167,24 +167,21 @@ namespace BannerlordRestartPlus.Actions
                 newHero.ChangeState(Hero.CharacterStates.Active);
             }
 
-            HeroTraitDeveloper developer = CreateHeroTraitDeveloper(newHero);
+            PropertyOwner<PropertyObject> developer = new PropertyOwner<PropertyObject>();
             currentCampaign.SetPlayerTraitDeveloper(developer);
             if (currentCampaign.MainParty == null)
             {
-                LordPartyComponent component = CreateLordPartyComponent(newHero, newHero);
-                MobileParty party = MobileParty.CreateParty(string.Concat("player_party_", newHero.StringId), component, (MobileParty mobileParty) =>
-                {
-                    // TODO: Check if new clan?
-                    mobileParty.ActualClan = Clan.PlayerClan;
-                });
+                MobileParty party = MobileParty.CreateParty(string.Concat("player_party_", newHero.StringId), null);
+                LordPartyComponent.ConvertPartyToLordParty(party, newHero, newHero);
+                party.ActualClan = Clan.PlayerClan;
                 currentCampaign.SetMainParty(party);
                 isMainPartyChanged = true;
                 if (!newHero.IsPrisoner)
                 {
-                    if (newHero.GetPosition().AsVec2 != Vec2.Zero)
+                    if (newHero.GetCampaignPosition().IsValid() && newHero.GetCampaignPosition().ToVec2() != Vec2.Zero)
                     {
-                        position3 = newHero.GetPosition();
-                        position = position3.AsVec2;
+                        position3 = newHero.GetPositionAsVec3();
+                        position = newHero.GetCampaignPosition();
                     }
                     else
                     {
@@ -195,32 +192,37 @@ namespace BannerlordRestartPlus.Actions
                                 return false;
                             }
                             return !s.OwnerClan.IsAtWarWith(Clan.PlayerClan);
-                        }).GetPosition2D;
+                        }).Position;
                     }
-                    Vec2 vec2 = position;
+                    Vec2 vec2 = position.ToVec2();
 
                     if (Main.Settings!.PlaceAtOldPosition)
                     {
-                        vec2 = oldMainParty.Position2D;
-                        position = vec2;
+                        position = oldMainParty.Position;
+                        vec2 = position.ToVec2();
                     }
 
-                    currentCampaign.MainParty!.InitializeMobilePartyAtPosition(currentCampaign.CurrentGame.ObjectManager.GetObject<PartyTemplateObject>("main_hero_party_template"), vec2, 0);
+                    //PartyTemplateObject pt = currentCampaign.CurrentGame.ObjectManager.GetObject<PartyTemplateObject>("main_hero_party_template");
+                    //var oldHeroStack = pt.Stacks.Find(s => s.Character == oldHero.CharacterObject)
+                    //    old
+                    currentCampaign.MainParty!.InitializeMobilePartyAtPosition(position);
                     currentCampaign.MainParty.IsActive = true;
                     currentCampaign.MainParty.MemberRoster.AddToCounts(Hero.MainHero.CharacterObject, 1, true, 0, 0, true, -1);
                 }
                 else
                 {
                     MobileParty mainParty = currentCampaign.MainParty!;
-                    PartyTemplateObject obj = currentCampaign.CurrentGame.ObjectManager.GetObject<PartyTemplateObject>("main_hero_party_template");
-                    position3 = Hero.MainHero.GetPosition();
-                    mainParty.InitializeMobilePartyAtPosition(obj, position3.AsVec2, 0);
+                    //PartyTemplateObject obj = currentCampaign.CurrentGame.ObjectManager.GetObject<PartyTemplateObject>("main_hero_party_template");
+                    position3 = Hero.MainHero.GetPositionAsVec3();
+                    position = Hero.MainHero.GetCampaignPosition();
+                    mainParty.InitializeMobilePartyAtPosition(position);
                     currentCampaign.MainParty!.IsActive = false;
                 }
             }
 
             // Why?
-            Campaign.Current.MainParty.Ai.SetAsMainParty();
+            //Campaign.Current.MainParty.Ai.SetAsMainParty();
+
 
             PartyBase.MainParty.ItemRoster.UpdateVersion();
             PartyBase.MainParty.MemberRoster.UpdateVersion();
@@ -228,7 +230,7 @@ namespace BannerlordRestartPlus.Actions
             {
                 PartyBase.MainParty.SetAsCameraFollowParty();
             }
-            PartyBase.MainParty.UpdateVisibilityAndInspected(0f);
+            PartyBase.MainParty.UpdateVisibilityAndInspected(position, 0f);
             if (Hero.MainHero.Mother != null)
             {
                 Hero.MainHero.Mother.SetHasMet();
@@ -237,7 +239,7 @@ namespace BannerlordRestartPlus.Actions
             {
                 Hero.MainHero.Father.SetHasMet();
             }
-            currentCampaign.MainParty.SetWagePaymentLimit(Campaign.Current.Models.PartyWageModel.MaxWage);
+            currentCampaign.MainParty.SetWagePaymentLimit(Campaign.Current.Models.PartyWageModel.MaxWagePaymentLimit);
 
             //newHero.PartyBelongedTo.StringId = oldPartyId;
             //Campaign.Current.ObjectManager.RegisterObject(newHero.PartyBelongedTo);

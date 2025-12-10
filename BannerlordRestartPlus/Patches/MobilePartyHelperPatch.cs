@@ -54,7 +54,7 @@
 
 //        [HarmonyFinalizer]
 //        [HarmonyPatch(nameof(CanTroopGainXp))]
-//        public static Exception FixCanTroopGainXp(ref Exception __exception)
+//        public static Exception FixCanTroopGainXp(Exception __exception)
 //        {
 //            if (__exception != null)
 //            {
@@ -100,7 +100,7 @@
 
 //        [HarmonyFinalizer]
 //        [HarmonyPatch(nameof(GetMaximumXpAmountPartyCanGet))]
-//        public static Exception FixGetMaximumXpAmountPartyCanGet(ref Exception __exception)
+//        public static Exception FixGetMaximumXpAmountPartyCanGet(Exception __exception)
 //        {
 //            if (__exception != null)
 //            {

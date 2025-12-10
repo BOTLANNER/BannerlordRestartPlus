@@ -2,6 +2,7 @@
 
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
+using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
@@ -24,15 +25,23 @@ namespace BannerlordRestartPlus.Actions
             CultureObject cultureObject = Kingdom.All.Where(k => k.Culture != null).ToList().GetRandomElement<Kingdom>().Culture;
             Banner banner = Banner.CreateRandomClanBanner(-1);
             Vec2 vec2 = new Vec2();
-            clan.InitializeClan(textObject, textObject1, cultureObject, banner, vec2, false);
+
+
+            clan.ChangeClanName(textObject, textObject);
+            clan.Culture = cultureObject;
+            clan.Banner = banner;
+            clan.SetInitialHomeSettlement(settlement);
+
+            //clan.InitializeClan(textObject, textObject1, cultureObject, banner, vec2, false);
             CharacterObject characterObject = culture.LordTemplates.FirstOrDefault<CharacterObject>((CharacterObject x) => x.Occupation == Occupation.Lord);
             Settlement randomElement = kingdom.Settlements.GetRandomElement<Settlement>();
             var hero = HeroCreator.CreateSpecialHero(characterObject ?? kingdom.Leader.CharacterObject, randomElement, age: MBRandom.RandomInt(18, 36));
+            hero.HeroDeveloper.InitializeHeroDeveloper();
             hero.ChangeState(Hero.CharacterStates.Active);
             clan.SetLeader(hero);
             if (clan.HomeSettlement == null)
             {
-                clan.UpdateHomeSettlement(hero.HomeSettlement ?? hero.BornSettlement ?? hero.CurrentSettlement ?? settlement);
+                clan.SetInitialHomeSettlement(hero.HomeSettlement ?? hero.BornSettlement ?? hero.CurrentSettlement ?? settlement);
             }
 
             if (requireFamily)
@@ -69,10 +78,12 @@ namespace BannerlordRestartPlus.Actions
 
                     hero.Clan.Renown = 0f;
 
-                    Campaign.Current.PlayerTraitDeveloper.UpdateTraitXPAccordingToTraitLevels();
+                    //Campaign.Current.PlayerTraitDeveloper.UpdateTraitXPAccordingToTraitLevels();
+                    TraitLevelingHelper.UpdateTraitXPAccordingToTraitLevels();
                 }
             }
 
+            CampaignEventDispatcher.Instance.OnClanCreated(clan, false);
             return hero;
         }
     }

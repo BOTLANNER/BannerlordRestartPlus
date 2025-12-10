@@ -13,12 +13,12 @@ namespace BannerlordRestartPlus.Patches
     [HarmonyPatch(typeof(HeroCreator))]
     public static class HeroCreatorPatch
     {
-        static MethodInfo _createNewHeroMethod = AccessTools.Method(typeof(HeroCreator), nameof(CreateNewHero));
+        //static MethodInfo _createNewHeroMethod = AccessTools.Method(typeof(HeroCreator), nameof(CreateNewHero));
 
-        private static Hero InvokeCreateNewHero(CharacterObject template, int age = -1)
-        {
-            return (Hero) _createNewHeroMethod.Invoke(null, new object[] { template, age });
-        }
+        //private static Hero InvokeCreateNewHero(CharacterObject template, int age = -1)
+        //{
+        //    return (Hero) _createNewHeroMethod.Invoke(null, new object[] { template, age });
+        //}
 
         static MethodInfo _staticBodyPropertiesPropSetter = AccessTools.Property(typeof(Hero), "StaticBodyProperties").GetSetMethod(true);
         private static void SetStaticBodyProperties(this Hero hero, StaticBodyProperties staticBodyProperties)
@@ -143,7 +143,7 @@ namespace BannerlordRestartPlus.Patches
 
         //[HarmonyFinalizer]
         //[HarmonyPatch(nameof(DeliverOffSpring))]
-        //public static Exception? FixDeliverOffSpring(ref Exception? __exception)
+        //public static Exception? FixDeliverOffSpring(Exception? __exception)
         //{
         //    if (__exception != null)
         //    {
@@ -158,32 +158,32 @@ namespace BannerlordRestartPlus.Patches
 
         public static FieldInfo DefaultCharacterSkills = AccessTools.Field(typeof(BasicCharacterObject), "DefaultCharacterSkills");
 
-        [HarmonyPrefix]
-        [HarmonyPatch(nameof(CreateNewHero))]
+        //[HarmonyPrefix]
+        //[HarmonyPatch(nameof(CreateNewHero))]
 
-        public static bool CreateNewHero(ref Hero __result, CharacterObject template, int age = -1)
-        {
-            try
-            {
-                if (DefaultCharacterSkills.GetValue(template) == null)
-                {
-                    DefaultCharacterSkills.SetValue(template, DefaultCharacterSkills.GetValue(Hero.MainHero.CharacterObject));
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                TaleWorlds.Library.Debug.PrintError(e.Message, e.StackTrace);
-                Debug.WriteDebugLineOnScreen(e.ToString());
-                Debug.SetCrashReportCustomString(e.Message);
-                Debug.SetCrashReportCustomStack(e.StackTrace);
-                return true;
-            }
-        }
+        //public static bool CreateNewHero(ref Hero __result, CharacterObject template, int age = -1)
+        //{
+        //    try
+        //    {
+        //        if (DefaultCharacterSkills.GetValue(template) == null)
+        //        {
+        //            DefaultCharacterSkills.SetValue(template, DefaultCharacterSkills.GetValue(Hero.MainHero.CharacterObject));
+        //        }
+        //        return true;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        TaleWorlds.Library.Debug.PrintError(e.Message, e.StackTrace);
+        //        Debug.WriteDebugLineOnScreen(e.ToString());
+        //        Debug.SetCrashReportCustomString(e.Message);
+        //        Debug.SetCrashReportCustomStack(e.StackTrace);
+        //        return true;
+        //    }
+        //}
 
         //[HarmonyFinalizer]
         //[HarmonyPatch(nameof(CreateNewHero))]
-        //public static Exception? FixCreateNewHero(ref Exception? __exception)
+        //public static Exception? FixCreateNewHero(Exception? __exception)
         //{
         //    if (__exception != null)
         //    {

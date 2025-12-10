@@ -19,7 +19,7 @@ namespace BannerlordRestartPlus.Patches.Runtime
 
         public void PatchSubmoduleLoad(Harmony harmony)
         {
-            MethodInfo method = AccessTools.Method(typeof(CharacterCreationState), nameof(CharacterCreationState.FinalizeCharacterCreation)).GetDeclaredMember();
+            MethodInfo method = AccessTools.Method(typeof(CharacterCreationState), nameof(CharacterCreationState.FinalizeCharacterCreationState)).GetDeclaredMember();
             harmony.Patch(method, prefix: new HarmonyMethod(typeof(CharacterCreationStatePatch), nameof(CharacterCreationStatePatch.FinalizeCharacterCreationInGame)));
 
 
@@ -38,7 +38,7 @@ namespace BannerlordRestartPlus.Patches.Runtime
             return true;
         }
 
-        public static Exception? FixHandleEscapeMenu(ref Exception __exception)
+        public static Exception? FixHandleEscapeMenu(Exception __exception)
         {
             if (__exception != null)
             {

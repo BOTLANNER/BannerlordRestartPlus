@@ -76,7 +76,7 @@ namespace BannerlordRestartPlus.Patches
 
         //[HarmonyFinalizer]
         //[HarmonyPatch(nameof(LoadXML))]
-        //public static Exception? LoadXML(ref Exception? __exception)
+        //public static Exception? LoadXML(Exception? __exception)
         //{
         //    if (__exception != null)
         //    {

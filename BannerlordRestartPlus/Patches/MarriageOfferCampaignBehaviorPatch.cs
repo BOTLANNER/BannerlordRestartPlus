@@ -62,7 +62,7 @@
 
 //        [HarmonyFinalizer]
 //        [HarmonyPatch(nameof(DailyTickClan))]
-//        public static Exception FixDailyTickClan(ref Exception __exception)
+//        public static Exception FixDailyTickClan(Exception __exception)
 //        {
 //            if (__exception != null)
 //            {

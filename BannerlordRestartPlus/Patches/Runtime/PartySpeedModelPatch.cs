@@ -63,7 +63,7 @@
 //            }
 //        }
 
-//        public static Exception? FixCalculateBaseSpeed(ref Exception? __exception)
+//        public static Exception? FixCalculateBaseSpeed(Exception? __exception)
 //        {
 //            if (__exception != null)
 //            {
@@ -97,7 +97,7 @@
 //            }
 //        }
 
-//        public static Exception? FixCalculateFinalSpeed(ref Exception? __exception)
+//        public static Exception? FixCalculateFinalSpeed(Exception? __exception)
 //        {
 //            if (__exception != null)
 //            {

@@ -31,7 +31,7 @@ namespace BannerlordRestartPlus.Patches
             if (Main.Settings != null && Main.Settings.Enabled)
             {
                 bool enabled = true;
-                TextObject disableReason = TextObject.Empty;
+                TextObject disableReason = TextObject.GetEmpty();
 
                 if (Game.Current == null || Campaign.Current == null || Hero.MainHero == null)
                 {

@@ -11,7 +11,6 @@ using BannerlordRestartPlus.UI;
 using SandBox;
 
 using StoryMode;
-using StoryMode.CharacterCreationContent;
 using StoryMode.GameComponents.CampaignBehaviors;
 using StoryMode.Quests.PlayerClanQuests;
 using StoryMode.Quests.SecondPhase;
@@ -43,8 +42,8 @@ namespace BannerlordRestartPlus.Actions
 
         public static Action<Hero, Hero>? PostApply = null;
 
-        static FieldInfo ActiveSaveSlotNameField = AccessTools.Field(typeof(MBSaveLoad), "ActiveSaveSlotName");
-        static MethodInfo GetNextAvailableSaveNameMethod = AccessTools.Method(typeof(MBSaveLoad), "GetNextAvailableSaveName");
+        public static PropertyInfo ActiveSaveSlotNameProp = AccessTools.Property(typeof(MBSaveLoad), nameof(MBSaveLoad.ActiveSaveSlotName));
+        public static MethodInfo GetNextAvailableSaveNameMethod = AccessTools.Method(typeof(MBSaveLoad), "GetNextAvailableSaveName");
 
 
         public static void Apply()
@@ -55,11 +54,11 @@ namespace BannerlordRestartPlus.Actions
 
             CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(Instance, new Action<bool, string>(Instance.ApplyInternal));
 
-            string saveName = (string) ActiveSaveSlotNameField.GetValue(null);
+            string saveName = (string) ActiveSaveSlotNameProp.GetValue(null);
             if (saveName == null)
             {
                 saveName = (string) GetNextAvailableSaveNameMethod.Invoke(null, new object[] { });
-                ActiveSaveSlotNameField.SetValue(null, saveName);
+                ActiveSaveSlotNameProp.SetValue(null, saveName);
             }
             Campaign.Current.SaveHandler.SaveAs(saveName + new TextObject("{=restart_plus_n_02} (auto)").ToString());
         }
@@ -185,11 +184,11 @@ namespace BannerlordRestartPlus.Actions
 
             if (Main.Settings!.CharacterCreation)
             {
-                var cccb = CharacterCreationContentBase.Instance;
-                if (cccb == null)
-                {
-                    cccb = GetCharacterCreationContent();
-                }
+                //var cccb = CharacterCreationContentBase.Instance;
+                //if (cccb == null)
+                //{
+                //    cccb = GetCharacterCreationContent();
+                //}
 
                 var active = Game.Current!.GameStateManager.ActiveState;
                 CharacterCreationStateExtensions.Position = position;
@@ -198,7 +197,7 @@ namespace BannerlordRestartPlus.Actions
                     CharacterCreationStateExtensions.MapState = ms;
                 }
 
-                CharacterCreationState gameState = Game.Current.GameStateManager.CreateState<CharacterCreationState>(new object[] { cccb });
+                CharacterCreationState gameState = Game.Current.GameStateManager.CreateState<CharacterCreationState>(new object[] { });
                 CharacterCreationStateExtensions.CharacterCreationState = gameState;
                 Game.Current!.GameStateManager.PushState(gameState, 0);
             }
@@ -269,45 +268,45 @@ namespace BannerlordRestartPlus.Actions
             MBGameManager.StartNewGame(new SandBoxGameManager(loadResult));
         }
 
-        private static CharacterCreationContentBase GetCharacterCreationContent()
-        {
-            var baseType = typeof(CharacterCreationContentBase);
-            var excludedTypes = new[] { typeof(SandboxCharacterCreationContent), typeof(StoryModeCharacterCreationContent) };
+        //private static CharacterCreationManager GetCharacterCreationContent()
+        //{
+        //    var baseType = typeof(CharacterCreationManager);
+        //    var excludedTypes = new[] { typeof(SandboxCharacterCreationContent), typeof(StoryModeCharacterCreationContent) };
 
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
-            {
-                foreach (var type in assembly.GetTypes())
-                {
-                    try
-                    {
-                        if (type.IsSubclassOf(baseType))
-                        {
+        //    Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        //    foreach (var assembly in assemblies)
+        //    {
+        //        foreach (var type in assembly.GetTypes())
+        //        {
+        //            try
+        //            {
+        //                if (type.IsSubclassOf(baseType))
+        //                {
 
-                            var cccbType = type;
-                            if (cccbType != null && !excludedTypes.Contains(cccbType))
-                            {
-                                var cccb = cccbType.CreateInstance();
-                                if (cccb is CharacterCreationContentBase ccc)
-                                {
-                                    return ccc;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteDebugLineOnScreen(e.ToString());
-                    }
-                }
-            }
+        //                    var cccbType = type;
+        //                    if (cccbType != null && !excludedTypes.Contains(cccbType))
+        //                    {
+        //                        var cccb = cccbType.CreateInstance();
+        //                        if (cccb is CharacterCreationContentBase ccc)
+        //                        {
+        //                            return ccc;
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                Debug.WriteDebugLineOnScreen(e.ToString());
+        //            }
+        //        }
+        //    }
 
-            if (Game.Current!.GameType is CampaignStoryMode)
-            {
-                return new StoryModeCharacterCreationContent();
-            }
+        //    if (Game.Current!.GameType is CampaignStoryMode)
+        //    {
+        //        return new StoryModeCharacterCreationContent();
+        //    }
 
-            return new SandboxCharacterCreationContent();
-        }
+        //    return new SandboxCharacterCreationContent();
+        //}
     }
 }
