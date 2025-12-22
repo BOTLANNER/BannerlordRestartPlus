@@ -31,6 +31,8 @@ using TaleWorlds.ScreenSystem;
 
 using FaceGen = TaleWorlds.Core.FaceGen;
 using BannerlordRestartPlus.Behaviours;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace BannerlordRestartPlus.Actions
 {
@@ -212,6 +214,8 @@ namespace BannerlordRestartPlus.Actions
                         PostApply = null;
                     }
 
+                    PostApplyPreSave(oldHero, tempMain);
+
                     CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(this, new Action<bool, string>(this.LoadInternal));
 
                     Campaign.Current.SaveHandler.SaveAs(newSaveGameName.Replace(new TextObject("{=restart_plus_n_02} (auto)").ToString(), new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString()));
@@ -225,6 +229,8 @@ namespace BannerlordRestartPlus.Actions
                     PostApply.Invoke(oldHero, tempMain);
                     PostApply = null;
                 }
+
+                PostApplyPreSave(oldHero, tempMain);
 
                 CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(this, new Action<bool, string>(this.LoadInternal));
 
@@ -266,6 +272,13 @@ namespace BannerlordRestartPlus.Actions
             }
             MBSaveLoad.OnStartGame(loadResult);
             MBGameManager.StartNewGame(new SandBoxGameManager(loadResult));
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Description("This method is available for Harmony patches that require acting after a Restart Plus has taken action, before the save and load.")]
+        public static void PostApplyPreSave(Hero oldHero, Hero newHero)
+        {
+            Debug.Print($"Restart Plus from: {oldHero} to {newHero}", 2, Debug.DebugColor.Purple);
         }
 
         //private static CharacterCreationManager GetCharacterCreationContent()

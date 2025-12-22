@@ -82,18 +82,19 @@ namespace BannerlordRestartPlus.Patches.Runtime
                 saveName += new TextObject("{=restart_plus_n_03} (RestartPlus)").ToString();
             }
 
-            if (RestartPlusAction.PostApply != null)
+            var oldPlayer = PreviousPlayerCharacters.Instance?.History?.LastOrDefault();
+            if (oldPlayer?.Hero != null)
             {
-                var oldPlayer = PreviousPlayerCharacters.Instance?.History?.LastOrDefault();
-                if (oldPlayer?.Hero != null)
+                var oldHero = oldPlayer.Hero;
+                if (RestartPlusAction.PostApply != null)
                 {
-                    var oldHero = oldPlayer.Hero;
                     if (oldHero.IsActive && !oldHero.IsDead && !oldHero.IsDisabled)
                     {
                         RestartPlusAction.PostApply.Invoke(oldHero, Hero.MainHero);
                         RestartPlusAction.PostApply = null;
                     }
                 }
+                RestartPlusAction.PostApplyPreSave(oldHero, Hero.MainHero);
             }
 
             Campaign.Current.SaveHandler.SaveAs(saveName);
